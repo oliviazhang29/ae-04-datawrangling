@@ -107,12 +107,14 @@ Your label should be short, informative, and shouldn't include spaces. It also
 shouldn't repeat a previous label, otherwise R Markdown will give you an 
 error about repeated R chunk labels.
 
-```{r label-me-1}
-# add code here
-# pay attention to correctness and code style
+```{r adults-frequency}
+hotels %>%
+  count(adults) %>%
+  arrange(desc(n))
 ```
+It is surprising that there are 403 zero adults booking cases. Don't know how that happened.
 
-### Exercise 6.
+### Exercise 6.????
 
 Repeat Exercise 5, once for canceled bookings (`is_canceled` coded as 1) and 
 once for not canceled bookings (`is_canceled` coded as 0). What does this 
@@ -120,10 +122,27 @@ reveal about the surprising results you spotted in the previous exercise?
 
 **Note:** Don't forget to label your R chunk as well (where it says `label-me-2`). 
 
-```{r label-me-2}
-# add code here
-# pay attention to correctness and code style
+```{r cancel-frequency}
+hotels %>%
+  filter(is_canceled == 1) %>% #canceled   
+  count(adults)
+
+hotels %>%
+  filter(is_canceled == 0) %>% #canceled   
+  count(adults)
+
+#  count(adults) %>%
+#  arrange(desc(n))
+
+hotels %>%
+  filter(is_canceled == 0) %>% #not canceled
+  count(adults) %>%
+  arrange(desc(n))
+
+hotels %>%
+  count(adults, is_canceled == 1)
 ```
+Among the 403 zero adults bookings, only 109 were canceled.
 
 ### Exercise 7.
 
@@ -131,10 +150,18 @@ Calculate minimum, mean, median, and maximum average daily rate (`adr`) grouped
 by `hotel` type so that you can get these statistics separately for resort and 
 city hotels. Which type of hotel is higher, on average? 
 
-```{r label-me-3}
-# add code here
-# pay attention to correctness and code style
+```{r descriptives-adr}
+hotels %>%
+  group_by(hotel) %>%
+  summarize(
+    min_adr = min(adr),
+    mean_adr = mean(adr),
+    median_adr = median(adr),
+    max_adr = max(adr)
+    )
 ```
+
+City hotel has higher adr on average. 
 
 ### Exercise 8.
 
@@ -148,9 +175,11 @@ preferably you should identify them in a reproducible way with some code.
 **Hint:** For example, you can `filter` for the given `adr` amounts and 
 `select` the relevant columns.
 
-```{r label-me-4}
-# add code here
-# pay attention to correctness and code style
+```{r get-unusual}
+hotels %>%
+  filter(adr == -6.38 | adr == 5400) %>% #why filter(adr == -6.38 | 5400) doesn't work
+  select(adr, hotel, arrival_date_year, arrival_date_month, adults, children, babies)
+
 ```
 
 
